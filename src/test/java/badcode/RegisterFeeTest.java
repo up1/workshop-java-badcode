@@ -20,7 +20,7 @@ public class RegisterFeeTest {
             "9,50",
             "10,0",
     })
-    public void getFeewithDataTable(int experience, int expectedFee) {
+    public void getFeeWithDataTable(int experience, int expectedFee) {
         RegisterBusiness registerBusiness = new RegisterBusiness();
         assertEquals(expectedFee, registerBusiness.getFee(experience));
     }

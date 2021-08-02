@@ -37,15 +37,15 @@ public class RegisterBusiness {
         return speakerId;
     }
 
-    int getFee(int exp) {
+    int getFee(int experienceYear) {
         int fee = 0;
-        if (exp <= 1) {
+        if (experienceYear <= 1) {
             fee = 500;
-        } else if (exp <= 3) {
+        } else if (experienceYear <= 3) {
             fee = 250;
-        } else if (exp <= 5) {
+        } else if (experienceYear <= 5) {
             fee = 100;
-        } else if (exp <= 9) {
+        } else if (experienceYear <= 9) {
             fee = 50;
         }
         return fee;

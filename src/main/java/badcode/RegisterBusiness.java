@@ -6,21 +6,18 @@ public class RegisterBusiness {
 
     public Integer register(SpeakerRepository repository, Speaker speaker) {
         Integer speakerId;
-        String[] domains = {"gmail.com", "live.com"};
-
         // Fail fast
-        if (speaker.getFirstName() == null || speaker.getFirstName().trim().equals("")) {
+        if (isEmptyOrNull(speaker.getFirstName())) {
             throw new ArgumentNullException("First name is required.");
         }
-        if (speaker.getLastName() == null || speaker.getLastName().trim().equals("")) {
+        if (isEmptyOrNull(speaker.getLastName())) {
             throw new ArgumentNullException("Last name is required.");
         }
-        if (speaker.getEmail() == null || speaker.getEmail().trim().equals("")) {
+        if (isEmptyOrNull(speaker.getEmail())) {
             throw new ArgumentNullException("Email is required.");
         }
 
-        String emailDomain = getEmailDomain(speaker.getEmail()); // Avoid ArrayIndexOutOfBound
-        if (Arrays.stream(domains).filter(it -> it.equals(emailDomain)).count() != 1) {
+        if (isValidEmailDomain(speaker.getEmail())) {
             throw new SpeakerDoesntMeetRequirementsException("Speaker doesn't meet our standard rules.");
         }
 
@@ -34,6 +31,16 @@ public class RegisterBusiness {
         }
 
         return speakerId;
+    }
+    // Coupling vs Cohesion !!
+    private boolean isValidEmailDomain(String email) {
+        String[] domainsOfEmail = {"gmail.com", "live.com"};
+        String emailDomain = getEmailDomain(email); // Avoid ArrayIndexOutOfBound
+        return Arrays.stream(domainsOfEmail).filter(it -> it.equals(emailDomain)).count() != 1;
+    }
+
+    private boolean isEmptyOrNull(String firstName) {
+        return firstName == null || firstName.trim().equals("");
     }
 
     int getFee(int experinceYear) {

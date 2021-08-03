@@ -6,7 +6,21 @@ public class RegisterBusiness {
 
     public Integer register(SpeakerRepository repository, Speaker speaker) {
         Integer speakerId;
-        // Fail fast
+
+        validateSpeakerData(speaker);
+        // Main process :: Save Speaker to Repository
+        int exp = speaker.getExp();
+        speaker.setRegistrationFee(getFee(exp));
+        try {
+            speakerId = repository.saveSpeaker(speaker);
+        } catch (Exception exception) {
+            throw new SaveSpeakerException("Can't save a speaker.");
+        }
+
+        return speakerId;
+    }
+
+    private void validateSpeakerData(Speaker speaker) {
         if (isEmptyOrNull(speaker.getFirstName())) {
             throw new ArgumentNullException("First name is required.");
         }
@@ -20,18 +34,8 @@ public class RegisterBusiness {
         if (isValidEmailDomain(speaker.getEmail())) {
             throw new SpeakerDoesntMeetRequirementsException("Speaker doesn't meet our standard rules.");
         }
-
-        // Main process :: Save Speaker to Repository
-        int exp = speaker.getExp();
-        speaker.setRegistrationFee(getFee(exp));
-        try {
-            speakerId = repository.saveSpeaker(speaker);
-        } catch (Exception exception) {
-            throw new SaveSpeakerException("Can't save a speaker.");
-        }
-
-        return speakerId;
     }
+
     // Coupling vs Cohesion !!
     private boolean isValidEmailDomain(String email) {
         String[] domainsOfEmail = {"gmail.com", "live.com"};

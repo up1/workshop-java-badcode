@@ -8,44 +8,42 @@ public class RegisterBusiness {
         Integer speakerId;
         String[] domains = {"gmail.com", "live.com"};
 
-        if (speaker.getFirstName() != null && !speaker.getFirstName().trim().equals("")) {
-            if (speaker.getLastName() != null && !speaker.getLastName().trim().equals("")) {
-                if (speaker.getEmail() != null && !speaker.getEmail().trim().equals("")) {
-                    // Your Tasks ...
-                    String emailDomain = getEmailDomain(speaker.getEmail()); // Avoid ArrayIndexOutOfBound
-                    if (Arrays.stream(domains).filter(it -> it.equals(emailDomain)).count() == 1) {
-                        int exp = speaker.getExp();
-                        speaker.setRegistrationFee(getFee(exp));
-                        try {
-                            speakerId = repository.saveSpeaker(speaker);
-                        } catch (Exception exception) {
-                            throw new SaveSpeakerException("Can't save a speaker.");
-                        }
-                    } else {
-                        throw new SpeakerDoesntMeetRequirementsException("Speaker doesn't meet our standard rules.");
-                    }
-                } else {
-                    throw new ArgumentNullException("Email is required.");
-                }
-            } else {
-                throw new ArgumentNullException("Last name is required.");
+        // Fail fast
+        if (speaker.getFirstName() == null || speaker.getFirstName().trim().equals("")) {
+            throw new ArgumentNullException("First name is required.");
+        }
+        if (speaker.getLastName() == null || speaker.getLastName().trim().equals("")) {
+            throw new ArgumentNullException("Last name is required.");
+        }
+        if (speaker.getEmail() == null || speaker.getEmail().trim().equals("")) {
+            throw new ArgumentNullException("Email is required.");
+        }
+
+        String emailDomain = getEmailDomain(speaker.getEmail()); // Avoid ArrayIndexOutOfBound
+        if (Arrays.stream(domains).filter(it -> it.equals(emailDomain)).count() == 1) {
+            int exp = speaker.getExp();
+            speaker.setRegistrationFee(getFee(exp));
+            try {
+                speakerId = repository.saveSpeaker(speaker);
+            } catch (Exception exception) {
+                throw new SaveSpeakerException("Can't save a speaker.");
             }
         } else {
-            throw new ArgumentNullException("First name is required.");
+            throw new SpeakerDoesntMeetRequirementsException("Speaker doesn't meet our standard rules.");
         }
 
         return speakerId;
     }
 
-    int getFee(int experienceYear) {
+    int getFee(int experinceYear) {
         int fee = 0;
-        if (experienceYear <= 1) {
+        if (experinceYear <= 1) {
             fee = 500;
-        } else if (experienceYear <= 3) {
+        } else if (experinceYear <= 3) {
             fee = 250;
-        } else if (experienceYear <= 5) {
+        } else if (experinceYear <= 5) {
             fee = 100;
-        } else if (experienceYear <= 9) {
+        } else if (experinceYear <= 9) {
             fee = 50;
         }
         return fee;
